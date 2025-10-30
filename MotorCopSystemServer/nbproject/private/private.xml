@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/model/Loan.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/SavingsAccountService.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/controller/ServerController.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/model/AccountTransaction.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/AccountTransactionService.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/dao/LoanDAO.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/implementation/AccountTransactionServiceImpl.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/util/HibernateUtil.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/CooperativesService.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/dao/MotorcyclistDAO.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/AdminService.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/LoanService.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/implementation/MotorcyclistServiceImpl.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/model/Motorcyclist.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/implementation/SavingsAccountServiceImpl.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/dao/CooperativesDAO.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/model/SavingsAccount.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/dao/SavingsAccountDAO.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/dao/AccountTransactionDAO.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/hibernate.cfg.xml</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/model/Cooperatives.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/MotorcyclistService.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/model/Admin.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/implementation/CooperativesServiceImpl.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/implementation/AdminServiceImpl.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/service/implementation/LoanServiceImpl.java</file>
+            <file>file:/C:/Users/user/Documents/NetBeansProjects/MotorCopSystemServer/src/dao/AdminDAO.java</file>
+        </group>
+    </open-files>
+</project-private>
