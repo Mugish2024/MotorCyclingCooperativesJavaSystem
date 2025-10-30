@@ -1,0 +1,521 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package view;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Motorcyclist;
+import model.SavingsAccount;
+import service.AccountTransactionService;
+import service.MotorcyclistService;
+import service.SavingsAccountService;
+
+/**
+ *
+ * @author user
+ */
+public class AccountsPage extends javax.swing.JFrame {
+private SavingsAccountService savingsService;
+    private MotorcyclistService motorcyclistService;
+    private DefaultTableModel tableModel;
+    /**
+     * Creates new form AccountsPage
+     */
+    public AccountsPage() {
+        initComponents();
+        initializeServices();
+        initializeTable();
+        loadAccounts();
+        
+    }
+    private void initializeServices() {
+        try {
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 2325);
+            savingsService = (SavingsAccountService) registry.lookup("SavingsAccountService");
+            motorcyclistService = (MotorcyclistService) registry.lookup("MotorcyclistService");
+            if (savingsService == null || motorcyclistService == null) throw new Exception("Failed to lookup services");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot connect to server: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+    }
+
+   private void initializeTable() {
+        tableModel = new DefaultTableModel(new String[]{"Account ID", "Account Number", "Balance", "Last Interest Date", "Rider Name"}, 0);
+        jTable1.setModel(tableModel);
+        jTable1.getColumnModel().getColumn(0).setMinWidth(0);
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
+        jTable1.getColumnModel().getColumn(0).setWidth(0);
+        jTable1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
+                int row = jTable1.getSelectedRow();
+                try {
+                    SavingsAccount account = savingsService.findById(Integer.parseInt(tableModel.getValueAt(row, 0).toString()));
+                    if (account != null && account.getMotorcyclist() != null) {
+                        MotorcyclistIdTxt.setText(String.valueOf(account.getMotorcyclist().getId()));
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Error fetching account: " + ex.getMessage());
+                }
+            }
+        });
+    }
+
+   void loadAccounts() {
+        try {
+            tableModel.setRowCount(0);
+            List<SavingsAccount> accounts = savingsService.findAll();
+            if (accounts != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                for (SavingsAccount account : accounts) {
+                    if (account != null) {
+                        tableModel.addRow(new Object[]{
+                            account.getAccountId(),
+                            account.getAccountNumber() != null ? account.getAccountNumber() : "",
+                            account.getBalance(),
+                            account.getLastInterestDate() != null ? sdf.format(account.getLastInterestDate()) : "",
+                            account.getMotorcyclist() != null ? account.getMotorcyclist().getName() : ""
+                        });
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error loading accounts: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String generateAccountNumber() {
+        try {
+            List<SavingsAccount> accounts = savingsService.findAll();
+            int maxNumber = 1000;
+            for (SavingsAccount account : accounts) {
+                if (account.getAccountNumber() != null && account.getAccountNumber().startsWith("ACC")) {
+                    try {
+                        int number = Integer.parseInt(account.getAccountNumber().substring(3));
+                        maxNumber = Math.max(maxNumber, number);
+                    } catch (NumberFormatException ignored) {}
+                }
+            }
+            return "ACC" + (maxNumber + 1);
+        } catch (Exception ex) {
+            return "ACC" + System.currentTimeMillis();
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        BackButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        MotorcyclistIdTxt = new javax.swing.JTextField();
+        RiderIdTxt = new javax.swing.JLabel();
+        SaveButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
+        SearchAccNbrTxt = new javax.swing.JTextField();
+        SearchByAccNbrButton = new javax.swing.JButton();
+        DeleteButton = new javax.swing.JButton();
+        DepositButton = new javax.swing.JButton();
+        WithdrawButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(0, 102, 102));
+
+        BackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/backIcon.PNG"))); // NOI18N
+        BackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(BackButton))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 63, Short.MAX_VALUE)
+                .addComponent(BackButton))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 5));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/registerIcon.PNG"))); // NOI18N
+        jLabel1.setText("Register Account");
+
+        MotorcyclistIdTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MotorcyclistIdTxtActionPerformed(evt);
+            }
+        });
+
+        RiderIdTxt.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        RiderIdTxt.setText("Enter Riders Id");
+
+        SaveButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        SaveButton.setText("Save");
+        SaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(MotorcyclistIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addComponent(RiderIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(70, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(SaveButton)
+                .addGap(102, 102, 102))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel1)
+                .addGap(45, 45, 45)
+                .addComponent(RiderIdTxt)
+                .addGap(18, 18, 18)
+                .addComponent(MotorcyclistIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(SaveButton)
+                .addGap(29, 29, 29))
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 5));
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/databaseIcon_1.PNG"))); // NOI18N
+        jLabel6.setText("Account Information");
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Account Number", "Balance", "Last Interest Date", "Rider Name"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/searchIcon.PNG"))); // NOI18N
+        jLabel7.setText("Enter Account No to Search");
+
+        SearchAccNbrTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchAccNbrTxtActionPerformed(evt);
+            }
+        });
+
+        SearchByAccNbrButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        SearchByAccNbrButton.setText("Search");
+        SearchByAccNbrButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchByAccNbrButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(SearchAccNbrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(SearchByAccNbrButton)))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(104, 104, 104)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(SearchAccNbrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SearchByAccNbrButton))
+                .addGap(110, 110, 110))
+        );
+
+        DeleteButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        DeleteButton.setText("Delete");
+        DeleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteButtonActionPerformed(evt);
+            }
+        });
+
+        DepositButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        DepositButton.setText("Deposit");
+        DepositButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DepositButtonActionPerformed(evt);
+            }
+        });
+
+        WithdrawButton.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        WithdrawButton.setText("Withdraw");
+        WithdrawButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                WithdrawButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(DeleteButton)
+                .addGap(45, 45, 45)
+                .addComponent(DepositButton)
+                .addGap(40, 40, 40)
+                .addComponent(WithdrawButton)
+                .addGap(94, 94, 94))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(DeleteButton)
+                    .addComponent(DepositButton)
+                    .addComponent(WithdrawButton))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void MotorcyclistIdTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MotorcyclistIdTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MotorcyclistIdTxtActionPerformed
+
+    private void SearchAccNbrTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchAccNbrTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchAccNbrTxtActionPerformed
+
+    private void SearchByAccNbrButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchByAccNbrButtonActionPerformed
+        // TODO add your handling code here:
+      try {
+            String accountNumber = SearchAccNbrTxt.getText().trim();
+            if (accountNumber.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Enter an account number.", "Error", JOptionPane.ERROR_MESSAGE);
+                loadAccounts();
+                return;
+            }
+            tableModel.setRowCount(0);
+            boolean found = false;
+            List<SavingsAccount> accounts = savingsService.findAll();
+            for (SavingsAccount account : accounts) {
+                if (accountNumber.equals(account.getAccountNumber())) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    tableModel.addRow(new Object[]{
+                        account.getAccountId(),
+                        account.getAccountNumber() != null ? account.getAccountNumber() : "",
+                        account.getBalance(),
+                        account.getLastInterestDate() != null ? sdf.format(account.getLastInterestDate()) : "",
+                        account.getMotorcyclist() != null ? account.getMotorcyclist().getName() : ""
+                    });
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                JOptionPane.showMessageDialog(this, "No account found with number " + accountNumber, "Info", JOptionPane.INFORMATION_MESSAGE);
+            }
+            SearchAccNbrTxt.setText("");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error searching account: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_SearchByAccNbrButtonActionPerformed
+
+    private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (MotorcyclistIdTxt.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Rider ID is required.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int motorcyclistId = Integer.parseInt(MotorcyclistIdTxt.getText().trim());
+            Motorcyclist motorcyclist = motorcyclistService.findById(motorcyclistId);
+            if (motorcyclist == null) {
+                JOptionPane.showMessageDialog(this, "Rider not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (savingsService.findByMotorcyclistId(motorcyclistId) != null) {
+                JOptionPane.showMessageDialog(this, "Rider already has an account.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            SavingsAccount account = new SavingsAccount();
+            account.setAccountNumber(generateAccountNumber());
+            account.setBalance(0.0);
+            account.setLastInterestDate(new Date());
+            account.setMotorcyclist(motorcyclist);
+            savingsService.save(account);
+            JOptionPane.showMessageDialog(this, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearFields();
+            loadAccounts();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Rider ID must be a number.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error saving account: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_SaveButtonActionPerformed
+
+    private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Select an account to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this account?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                int accountId = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
+                SavingsAccount account = savingsService.findById(accountId);
+                if (account != null) {
+                    savingsService.delete(account);
+                    JOptionPane.showMessageDialog(this, "Account deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    clearFields();
+                    loadAccounts();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Account not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid account ID.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error deleting account: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_DeleteButtonActionPerformed
+
+    private void DepositButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DepositButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Select an account to deposit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String accountNumber = tableModel.getValueAt(selectedRow, 1).toString();
+        DepositForm depositForm = new DepositForm(this, accountNumber);
+        depositForm.setVisible(true);
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Error opening deposit form: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_DepositButtonActionPerformed
+
+    private void WithdrawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WithdrawButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Select an account to withdraw.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String accountNumber = tableModel.getValueAt(selectedRow, 1).toString();
+        Withdrawform withdrawForm = new Withdrawform(this, accountNumber);
+        withdrawForm.setVisible(true);
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Error opening withdraw form: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_WithdrawButtonActionPerformed
+
+    private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackButtonActionPerformed
+        // TODO add your handling code here:
+         new DashBoard1().setVisible(true); // Open SignupFrame
+        dispose();
+    }//GEN-LAST:event_BackButtonActionPerformed
+private void clearFields() {
+        MotorcyclistIdTxt.setText("");
+        SearchAccNbrTxt.setText("");
+}
+    /**
+     * @param args the command line arguments
+     */
+   
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BackButton;
+    private javax.swing.JButton DeleteButton;
+    private javax.swing.JButton DepositButton;
+    private javax.swing.JTextField MotorcyclistIdTxt;
+    private javax.swing.JLabel RiderIdTxt;
+    private javax.swing.JButton SaveButton;
+    private javax.swing.JTextField SearchAccNbrTxt;
+    private javax.swing.JButton SearchByAccNbrButton;
+    private javax.swing.JButton WithdrawButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    // End of variables declaration//GEN-END:variables
+}
